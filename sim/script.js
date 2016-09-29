@@ -42,6 +42,16 @@ var values = { // m for model
     DE: 0,
     DF: 0,
 
+    KI_sign: 0,
+    KL_sign: 0,
+    LI_sign: 0,
+    LJ_sign: 0,
+    JI_sign: 0,
+    JH_sign: 0,
+    CE_sign: 0,
+    DE_sign: 0,
+    DF_sign: 0,
+
 };
 
 var valuesRounded = {
@@ -81,6 +91,16 @@ var valuesRounded = {
     CE: 0,
     DE: 0,
     DF: 0,
+
+    KI_sign: 0,
+    KL_sign: 0,
+    LI_sign: 0,
+    LJ_sign: 0,
+    JI_sign: 0,
+    JH_sign: 0,
+    CE_sign: 0,
+    DE_sign: 0,
+    DF_sign: 0,
 };
 
 var names = { //choose how to write variable string.
@@ -120,6 +140,16 @@ var names = { //choose how to write variable string.
     CE: "CE",
     DE: "DE",
     DF: "DF",
+
+    KI_sign: "KIs",
+    KL_sign: "KLs",
+    LI_sign: "LIs",
+    LJ_sign: "LJs",
+    JI_sign: "JIs",
+    JH_sign: "JHs",
+    CE_sign: "CEs",
+    DE_sign: "DEs",
+    DF_sign: "DFs",
 };
 
 var units = { //write the units
@@ -159,6 +189,16 @@ var units = { //write the units
     CE: "N",
     DE: "N",
     DF: "N",
+
+    KI_sign: "N",
+    KL_sign: "N",
+    LI_sign: "N",
+    LJ_sign: "N",
+    JI_sign: "N",
+    JH_sign: "N",
+    CE_sign: "N",
+    DE_sign: "N",
+    DF_sign: "N",
 };
 
 
@@ -202,6 +242,17 @@ var model = new pipit.CapiAdapter.CapiModel({
     CE: 0,
     DE: 0,
     DF: 0,
+
+    KI_sign: 0,
+    KL_sign: 0,
+    LI_sign: 0,
+    LJ_sign: 0,
+    JI_sign: 0,
+    JH_sign: 0,
+    CE_sign: 0,
+    DE_sign: 0,
+    DF_sign: 0,
+
     page: "10",
 });
 // I think this exposes the values to Smart Sparrow. :D
@@ -225,6 +276,16 @@ pipit.CapiAdapter.expose('JH', model);
 pipit.CapiAdapter.expose('CE', model);
 pipit.CapiAdapter.expose('DE', model);
 pipit.CapiAdapter.expose('DF', model);
+
+pipit.CapiAdapter.expose('KI_sign', model);
+pipit.CapiAdapter.expose('KL_sign', model);
+pipit.CapiAdapter.expose('LI_sign', model);
+pipit.CapiAdapter.expose('LJ_sign', model);
+pipit.CapiAdapter.expose('JI_sign', model);
+pipit.CapiAdapter.expose('JH_sign', model);
+pipit.CapiAdapter.expose('CE_sign', model);
+pipit.CapiAdapter.expose('DE_sign', model);
+pipit.CapiAdapter.expose('DF_sign', model);
 pipit.CapiAdapter.expose('page', model);
 
 //this gets the values from Smart Sparrow. So does that mean I need to put inputs into Smart Sparrow variable tab? Either way, I'm sure these are just the inputs
@@ -278,6 +339,16 @@ function sendValuesToSS() {
     model.set("CE", values.CE);
     model.set("DE", values.DE);
     model.set("DF", values.DF);
+
+    model.set("KI_sign", values.KI);
+    model.set("KL_sign", values.KL);
+    model.set("LI_sign", values.LI);
+    model.set("LJ_sign", values.LJ);
+    model.set("JI_sign", values.JI);
+    model.set("JH_sign", values.JH);
+    model.set("CE_sign", values.CE);
+    model.set("DE_sign", values.DE);
+    model.set("DF_sign", values.DF);
 }
 // what is the purpose of the num == 4 ? Is this to make it fit to the table somehow?
 function displayValues() {
@@ -351,6 +422,19 @@ function calculateVariables() {
     values.CE = (values.Ay - values.F1)/2;
     values.DE = (values.Ay - values.F1)/Math.sin(values.theta3);
     values.DF = -values.CE - values.DE*Math.cos(values.theta3);
+
+    if (values.KI > 0) {values.KI_sign = 1;} else if (values.KI < 0) {values.KI_sign = 2;} else {values.KI_sign = 3;}
+    if (values.KL > 0) {values.KL_sign = 1;} else if (values.KL < 0) {values.KL_sign = 2;} else {values.KL_sign = 3;}
+
+    if (values.LI > 0) {values.LI_sign = 1;} else if (values.LI < 0) {values.LI_sign = 2;} else {values.LI_sign = 3;}
+    if (values.LJ > 0) {values.LJ_sign = 1;} else if (values.LJ < 0) {values.LJ_sign = 2;} else {values.LJ_sign = 3;}
+
+    if (values.KI > 0) {values.JI_sign = 1;} else if (values.JI < 0) {values.JI_sign = 2;} else {values.JI_sign = 3;}
+    if (values.KL > 0) {values.JH_sign = 1;} else if (values.JH < 0) {values.JH_sign = 2;} else {values.JH_sign = 3;}
+
+    if (values.CE > 0) {values.CE_sign = 1;} else if (values.CE < 0) {values.CE_sign = 2;} else {values.CE_sign = 3;}
+    if (values.DE > 0) {values.DE_sign = 1;} else if (values.DE < 0) {values.DE_sign = 2;} else {values.DE_sign = 3;}
+    if (values.DF > 0) {values.DF_sign = 1;} else if (values.DF < 0) {values.DF_sign = 2;} else {values.DF_sign = 3;}
 
 
     // Round values into valuesRounded
