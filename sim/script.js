@@ -423,18 +423,19 @@ function calculateVariables() {
     values.DE = (values.Ay - values.F1)/Math.sin(values.theta3);
     values.DF = -values.CE - values.DE*Math.cos(values.theta3);
 
-    if (values.KI > 0) {values.KI_sign == 1;} else if (values.KI < 0) {values.KI_sign == 2;} else {values.KI_sign == 3;}
-    if (values.KL > 0) {values.KL_sign == 1;} else if (values.KL < 0) {values.KL_sign == 2;} else {values.KL_sign == 3;}
+    if (values.KI > 0) {values.KI_sign = 1;} else if (values.KI < 0) {values.KI_sign = 2;} else {values.KI_sign = 3;}
+    if (values.KL > 0) {values.KL_sign = 1;} else if (values.KL < 0) {values.KL_sign = 2;} else {values.KL_sign = 3;}
 
-    if (values.LI > 0) {values.LI_sign == 1;} else if (values.LI < 0) {values.LI_sign == 2;} else {values.LI_sign == 3;}
-    if (values.LJ > 0) {values.LJ_sign == 1;} else if (values.LJ < 0) {values.LJ_sign == 2;} else {values.LJ_sign == 3;}
+    if (values.LI > 0) {values.LI_sign = 1;} else if (values.LI < 0) {values.LI_sign = 2;} else {values.LI_sign = 3;}
+    if (values.LJ > 0) {values.LJ_sign = 1;} else if (values.LJ < 0) {values.LJ_sign = 2;} else {values.LJ_sign = 3;}
 
-    if (values.KI > 0) {values.JI_sign == 1;} else if (values.JI < 0) {values.JI_sign == 2;} else {values.JI_sign == 3;}
-    if (values.KL > 0) {values.JH_sign == 1;} else if (values.JH < 0) {values.JH_sign == 2;} else {values.JH_sign == 3;}
+    if (values.KI > 0) {values.JI_sign = 1;} else if (values.JI < 0) {values.JI_sign = 2;} else {values.JI_sign = 3;}
+    if (values.KL > 0) {values.JH_sign = 1;} else if (values.JH < 0) {values.JH_sign = 2;} else {values.JH_sign = 3;}
 
-    if (values.CE > 0) {values.CE_sign == 1;} else if (values.CE < 0) {values.CE_sign == 2;} else {values.CE_sign == 3;}
-    if (values.DE > 0) {values.DE_sign == 1;} else if (values.DE < 0) {values.DE_sign == 2;} else {values.DE_sign == 3;}
-    if (values.DF > 0) {values.DF_sign == 1;} else if (values.DF < 0) {values.DF_sign == 2;} else {values.DF_sign == 3;}
+    if (values.CE > 0) {values.CE_sign = 1;} else if (values.CE < 0) {values.CE_sign = 2;} else {values.CE_sign = 3;}
+    if (values.DE > 0) {values.DE_sign = 1;} else if (values.DE < 0) {values.DE_sign = 2;} else {values.DE_sign = 3;}
+
+    values.DF_sign = 41;
 
 
     // Round values into valuesRounded
