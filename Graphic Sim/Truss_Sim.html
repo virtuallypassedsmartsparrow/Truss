@@ -1,0 +1,504 @@
+
+<!doctype= html>
+
+<html>
+<head>
+
+
+  <title>Truss</title>
+
+<body onload="start_sim()">
+
+<div style="float: left; padding-right: 20px;">
+	<p>F<sub>1</sub> = <span id="Force1">3</span> kN </p><input id="F1" type="range" step="0.1" value="3" min="-5" max="5" onInput="Force1Change(this.value); start_sim()">
+	<p>F<sub>2</sub> = <span id="Force2">4</span> kN </p><input id="F2" type="range" step="0.1" value="4" min="-5" max="5" onInput="Force2Change(this.value); start_sim()">
+	<p>F<sub>3</sub> = <span id="Force3">5</span> kN </p><input id="F3" type="range" step="0.1" value="5" min="-5" max="5" onInput="Force3Change(this.value); start_sim()"><br><br>
+
+</div>
+		<canvas id="myCanvas" width="430" height="350" style="border:1px solid #d3d3d3; float: left;"></canvas>
+  <script>
+
+function Force1Change(val) {
+	document.getElementById('Force1').innerHTML = val;
+}
+
+function Force2Change(val) {
+	document.getElementById('Force2').innerHTML = val;
+}
+
+function Force3Change(val) {
+	document.getElementById('Force3').innerHTML = val;
+}
+
+// var ctx = getCanvas();
+
+// var myinterval;
+// var dt = 0.005; // in seconds
+//scale is 50 pixles per meter
+var scale = 40
+var force_scale = 0.15
+var canvasheight = document.getElementById('myCanvas').height / scale //canvasheight in meters
+var canvaswidth = document.getElementById('myCanvas').width / scale // canvaswidth in meters
+
+var dist_KL; //m
+var dist_CD;
+var dist_AB;
+var dist_JL;
+
+var x_0; //x position of center of mass
+var y_0; //y position of center of mass
+
+var theta1;
+var theta2;
+var theta3;
+var theta4;
+var theta5;
+
+
+var Ay;
+var Ky;
+
+var members = [
+'KI',
+'KL',
+'LI',
+'LJ',
+'JI',
+'JH',
+'IH',
+'IG',
+'GE',
+'GH',
+'HE',
+'HF',
+'FD',
+'FE',
+'ED',
+'EC',
+'CA',
+'CD',
+'BD',
+'BA',
+'AD']
+
+var members_sign = [
+'KI_sign',
+'KL_sign',
+'LI_sign',
+'LJ_sign',
+'JI_sign',
+'JH_sign',
+'IH_sign',
+'IG_sign',
+'GE_sign',
+'GH_sign',
+'HE_sign',
+'HF_sign',
+'FD_sign',
+'FE_sign',
+'ED_sign',
+'EC_sign',
+'CA_sign',
+'CD_sign',
+'BD_sign',
+'BA_sign',
+'AD_sign']
+
+
+function start_sim(){
+	//clearInterval(myinterval);
+//inputs and geometry
+
+F1 = Number(document.getElementById("F1").value);
+F2 = Number(document.getElementById("F2").value);
+F3 = Number(document.getElementById("F3").value);
+
+x_0 = 0.1*canvaswidth; //x position of center of mass
+y_0 = 0.1*canvasheight; //y position of center of mass
+
+dist_KL = 7; //m
+dist_CD = 2;
+dist_AB = 3;
+dist_JL = 1;
+
+Ay = (1/5)*(5*F1+3*F2+1*F3);
+Ky = F1+F2+F3-Ay;
+
+theta1 = Math.atan(3*dist_JL/(dist_KL-dist_CD));
+theta2 = Math.atan((dist_KL-dist_JL/Math.tan(theta1))/dist_JL);
+theta3 = Math.atan(dist_CD/dist_JL);
+theta4 = Math.atan(dist_JL/(dist_AB-dist_CD));
+theta5 = Math.atan(dist_JL/dist_AB);
+
+//KI 
+members[0] = 0;
+KI = 0;
+//KL
+members[1] = - Ky;
+KL = - Ky;
+
+//LI
+members[2] = - KL / Math.sin(theta2);
+LI = - KL / Math.sin(theta2);
+//LJ
+members[3] = - LI * Math.cos(theta2);
+LJ = - LI * Math.cos(theta2);
+
+//JI
+members[4] = -F3;
+JI = -F3;
+//JH
+members[5] = LJ;
+JH = LJ
+
+//IH
+members[6] = (F3 + 7*JH)/(Math.sin(theta2)-Math.cos(theta2)/Math.tan(theta1));
+IH = (F3 + 7*JH)/(Math.sin(theta2)-Math.cos(theta2)/Math.tan(theta1));
+//IG
+members[7] = (-JH - IH * Math.cos(theta2))/Math.sin(theta1);
+IG = (-JH - IH * Math.cos(theta2))/Math.sin(theta1);
+
+//GE
+members[8] = IG;
+GE = IG;
+//GH
+members[9] = 0;
+GH = 0;
+
+//HE
+members[10] = - IH*Math.sin(theta2)/Math.sin(theta3) - GH/Math.sin(theta3);
+HE = - IH*Math.sin(theta2)/Math.sin(theta3) - GH/Math.sin(theta3);
+//HF
+members[11] = JH + IH*Math.cos(theta2) - HE*Math.cos(theta3);
+HF = JH + IH*Math.cos(theta2) - HE*Math.cos(theta3);
+
+//FD
+members[12] = HF;
+FD = HF;
+//FE
+members[13] = - F2;
+FE = - F2;
+
+//ED
+members[14] = (GE*Math.cos(theta1) - HE*Math.sin(theta3) - FE)/Math.sin(theta3);
+ED = (GE*Math.cos(theta1) - HE*Math.sin(theta3) - FE)/Math.sin(theta3);
+//EC
+members[15] = GE*Math.sin(theta1) + HE*Math.cos(theta3) - ED*Math.cos(theta3);
+EC = GE*Math.sin(theta1) + HE*Math.cos(theta3) - ED*Math.cos(theta3);
+
+//CA
+members[16] = EC / Math.sin(theta4);
+CA = EC / Math.sin(theta4);
+//CD
+members[17] = CA * Math.cos(theta4);
+CD = CA * Math.cos(theta4);
+
+//BD
+members[18] = 0;
+BD = 0;
+//BA
+members[19] = -F1;
+BA = -F1;
+
+//AD
+members[20] = - CA * Math.sin(theta4)/Math.sin(theta5);
+AD = - CA * Math.sin(theta4)/Math.sin(theta5);
+
+//now calculate tension / compression / no force member
+
+for (var i=0; i< members_sign.length ; i++) {
+		if (members[i] > 0) {
+		members_sign[i] = 1; //tension
+	} else if (members[i] < 0) {
+		members_sign[i] = 2; //compression
+	} else {
+		members_sign[i] = 3; //no force memeber
+	}
+}
+
+simulate_calcs();
+// myinterval = setInterval(function(){simulate_calcs()}, dt * 1000)
+// }
+
+function simulate_calcs() {
+var ctx=getCanvas();
+
+ctx.clearRect(0,0,canvaswidth*scale,canvasheight*scale);
+
+	ctx.font = '12px Calibri';
+	ctx.fillStyle = 'black';
+	// // for (i = 0; i < members.length; i++) {
+	// // 	ctx.fillText("members[i] = " + members[i])
+	// // }
+	ctx.fillText("Tension",2*x_0*scale + 5*scale + 0.1*canvaswidth*scale + 5, y_0*scale + 12);
+	ctx.fillText("Compression",2*x_0*scale + 5*scale + 0.1*canvaswidth*scale + 5, y_0*scale + 0.5*scale + 12);
+	ctx.fillText("No force member",2*x_0*scale + 5*scale + 0.1*canvaswidth*scale + 5, y_0*scale + 1*scale + 12);
+
+	// ctx.fillText("theta1 = " + theta1, 320, 15);
+	// ctx.fillText("theta2 = " + theta2, 320, 25);
+	// ctx.fillText("theta3 = " + theta3, 320, 35);
+	// ctx.fillText("theta4 = " + theta4, 320, 45);
+	// ctx.fillText("theta5 = " + theta5, 320, 55);
+
+	// ctx.fillText("Ay = " + Ay, 320, 75);
+	// ctx.fillText("Ky = " + Ky, 320, 85);
+	// ctx.fillText("KL = " + KL, 320, 95);
+	// ctx.fillText("KI = " + KI, 320, 105);
+	// ctx.fillText("JI = " + JI, 320, 115);
+	// ctx.fillText("JH = " + JH, 320, 125);
+	// ctx.fillText("IH = " + IH, 320, 135);
+	// ctx.fillText("IG = " + IG, 320, 145);
+	// ctx.fillText("GE = " + GE, 320, 155);
+	// ctx.fillText("GH = " + GH, 320, 165);
+	// ctx.fillText("HE = " + HE, 320, 175);
+	// ctx.fillText("HF = " + HF, 320, 185);
+	// ctx.fillText("FD = " + FD, 320, 195);
+	// ctx.fillText("FE = " + FE, 320, 205);
+	// ctx.fillText("ED = " + ED, 320, 215);
+	// ctx.fillText("EC = " + EC, 320, 225);
+	// ctx.fillText("CA = " + CA, 320, 235);
+	// ctx.fillText("CD = " + CD, 320, 245);
+	// ctx.fillText("BD = " + BD, 320, 255);
+	// ctx.fillText("BA = " + BA, 320, 265);
+	// ctx.fillText("AD = " + AD, 320, 275);
+
+
+	// ctx.fillText("BD_sign = " + members_sign[18], 320, 295);
+	// ctx.fillText("BA_sign = " + members_sign[19], 320, 305);
+	// ctx.fillText("GE_sign = " + members_sign[8], 320, 315);
+	// ctx.fillText("KI_sign = " + members_sign[0], 320, 325);
+
+
+//	ctx.fill();
+
+
+
+	//AB
+	drawLine2(x_0,y_0,x_0,y_0+3,members_sign[19]);
+	//AC
+	drawLine2(x_0,y_0+3,x_0+1,y_0+2,members_sign[16]);
+	//AD
+	drawLine2(x_0,y_0+3,x_0+1,y_0,members_sign[20]);
+	//BD
+	drawLine2(x_0,y_0,x_0+1,y_0,members_sign[18]);
+	//DC
+	drawLine2(x_0+1,y_0,x_0+1,y_0+2,members_sign[17]);
+	//DF
+	drawLine2(x_0+1,y_0,x_0+2,y_0,members_sign[12]);
+	//DE
+	drawLine2(x_0+1,y_0,x_0+2,y_0+2,members_sign[14]);
+	//CE
+	drawLine2(x_0+1,y_0+2,x_0+2,y_0+2,members_sign[15]);
+	//EF
+	drawLine2(x_0+2,y_0+2,x_0+2,y_0,members_sign[13]);
+	//EH
+	drawLine2(x_0+2,y_0+2,x_0+3,y_0,members_sign[10]);
+	//FH
+	drawLine2(x_0+2,y_0,x_0+3,y_0,members_sign[11]);
+	//EG
+	drawLine2(x_0+2,y_0+2,x_0+3,y_0+2+(5/3),members_sign[8]);
+	//GH
+	drawLine2(x_0+3,y_0,x_0+3,y_0+2+(5/3),members_sign[9]);
+	//HJ
+	drawLine2(x_0+3,y_0,x_0+4,y_0,members_sign[5]);
+	//HI
+	drawLine2(x_0+3,y_0,x_0+4,y_0+2+2*(5/3),members_sign[6]);
+	//GI
+	drawLine2(x_0+3,y_0+2+(5/3),x_0+4,y_0+2+2*(5/3),members_sign[7]);
+	//JI
+	drawLine2(x_0+4,y_0,x_0+4,y_0+2+2*(5/3),members_sign[4]);
+	//JL
+	drawLine2(x_0+4,y_0,x_0+5,y_0,members_sign[3]);
+	//LK
+	drawLine2(x_0+5,y_0,x_0+5,y_0+2+3*(5/3),members_sign[1]);
+	//IL
+	drawLine2(x_0+4,y_0+2+2*(5/3),x_0+5,y_0,members_sign[2]);
+	//IK
+	drawLine2(x_0+4,y_0+2+2*(5/3),x_0+5,y_0+2+3*(5/3),members_sign[0]);
+
+
+	//Reactions
+	//Ay
+	drawArrowSmall(x_0,y_0+3+Ay*force_scale,x_0,y_0+3,'blue');
+	//Ky
+	drawArrowSmall(x_0+5,y_0+2+3*(5/3)+Ky*force_scale,x_0+5,y_0+2+3*(5/3),'blue');
+
+	//Forces
+	//F1
+	drawArrowSmall(x_0,y_0-F1*force_scale,x_0,y_0,'rgb(196,121,11)');
+	//F2
+	drawArrowSmall(x_0+2,y_0-F2*force_scale,x_0+2,y_0,'rgb(196,121,11)');
+	//F3
+	drawArrowSmall(x_0+4,y_0-F3*force_scale,x_0+4,y_0,'rgb(196,121,11)');
+
+	//legend
+	drawRectangle(2*x_0 + 5, y_0 ,0.1*canvaswidth,0.04*canvasheight, 'rgba(230,230,0,0.6)'); //tension
+	drawRectangle(2*x_0 + 5, y_0 +0.5,0.1*canvaswidth,0.04*canvasheight, 'rgba(255, 80, 80,0.6)'); //compression
+	drawRectangle(2*x_0 + 5, y_0 +1,0.1*canvaswidth,0.04*canvasheight, 'rgba(135,206,250,0.7)'); //no force member
+
+
+	// //bar
+	// drawRectangleSlant(x_0 - 0.5*L*Math.cos(theta) + 0.5*t*Math.sin(theta), y_0 - 0.5*L*Math.sin(theta) - 0.5*t*Math.cos(theta), L, t, theta);
+
+	// //drawing Pin
+	// drawBall(canvaswidth / 2, canvasheight / 2, t / 2);
+
+	// //drawing reactions
+	// drawArrowSmall(0.5 * canvaswidth - O_x,0.5 * canvasheight + O_y,0.5 * canvaswidth ,0.5 * canvasheight, 'blue');
+
+	// //drawing gravity force
+	// drawArrowSmall(x_0, y_0, x_0, y_0 + m * 9.81, 'green');
+
+	// //this stops the fill from the next from affecting the last draw arrow for some reason. 
+	// ctx.beginPath();
+
+
+	// //rotation of bar
+	// alpha = m * 9.81 * b * Math.cos(theta) / I_o;
+	// w = w + alpha * dt;
+	// theta = theta + w * dt;
+
+	// x_0 = 0.5 * canvaswidth + b * Math.cos(theta);
+	// y_0 =  0.5 * canvasheight + b * Math.sin(theta);
+
+	// //Reactions
+	// a_x = - 3 * m * 9.81 * b * b * Math.sin(theta) * Math.cos(theta) / I_o;
+	// a_y = m * 9.81 * b * b * (-1 + 3 * Math.sin(theta) * Math.sin(theta)) / I_o;
+
+	// O_x = m * a_x;
+	// O_y = m * a_y + m * 9.81;
+
+}
+
+
+
+
+function getCanvas() {
+	var c = document.getElementById("myCanvas");
+	return c.getContext("2d");
+} 
+
+function drawRectangle( x, y, width, height, color) {
+	var ctx = getCanvas();
+
+	ctx.beginPath();
+	ctx.rect(x * scale, y * scale, width * scale, height * scale);
+	ctx.fillStyle = color;
+
+	ctx.fill();
+
+}
+
+function drawRectangleSlant(x1, y1, L, t, theta) {
+	var ctx = getCanvas();
+
+	ctx.beginPath();
+	var gr = ctx.createLinearGradient(scale * x1, scale * y1, scale * (x1 + L*Math.cos(theta)), scale * (y1 + L*Math.sin(theta)));
+	gr.addColorStop(0,'rgb(204,204,204)');
+	gr.addColorStop(0.5, 'rgb(191,191,191');
+	gr.addColorStop(1,'rgb(200,200,200)');
+	ctx.fillStyle = gr;
+
+	ctx.moveTo(scale * x1, scale * y1);
+	ctx.lineTo(scale * (x1 + L * Math.cos(theta)), scale * (y1 + L * Math.sin(theta)));
+	ctx.lineTo(scale * (x1 + L * Math.cos(theta) - t * Math.sin(theta)), scale * (y1 + L * Math.sin(theta) + t * Math.cos(theta)));
+	ctx.lineTo(scale * (x1 - t * Math.sin(theta)), scale * (y1 + t * Math.cos(theta)));
+	ctx.lineTo(scale * x1, scale * y1);
+	ctx.stroke();
+
+	ctx.fill();
+	ctx.closePath();
+}
+
+function drawLine2(x1,y1,x2,y2,color) {
+	var ctx = getCanvas();
+
+	ctx.beginPath();
+	ctx.moveTo(x1 * scale,y1 * scale);
+	ctx.lineTo(x2 * scale,y2 * scale);
+	//tension //'rgba(135,206,250,0.7)'
+	if (color == 1) {
+		ctx.strokeStyle = 'rgba(230,230,0,0.6)'
+	}
+	//compression //'rgba(230,230,0,0.7)'
+	else if (color == 2) {
+		ctx.strokeStyle = 'rgba(255, 80, 80,0.6)'
+	}
+	//no force memeber //'rgba(0,153,0,0.5)'
+	else if (color == 3) {
+		ctx.strokeStyle = 'rgba(135,206,250,0.7)'
+	}
+
+	ctx.lineWidth=4;
+	ctx.stroke();
+
+	ctx.closePath();
+}
+
+function drawLine(x1,y1,x2,y2) {
+	var ctx = getCanvas();
+
+	ctx.beginPath();
+	ctx.moveTo(x1 * scale,y1 * scale);
+	ctx.lineTo(x2 * scale,y2 * scale);
+	ctx.stroke();
+}
+
+function drawArrowLarge(x,y,x_tip,y_tip) {
+	var ctx = getCanvas();
+
+	var theta = Math.atan((y_tip - y) / (x_tip - x));
+	if (x_tip - x < 0) {
+    theta = theta + Math.PI;
+} else { 
+    theta = theta;
+}
+	ctx.beginPath();
+	ctx.moveTo(x * scale, y * scale);
+	ctx.lineTo(x_tip * scale, y_tip * scale);
+	ctx.lineTo(scale*x_tip - scale*0.3 * Math.sin(0.25 * Math.PI - theta), scale*y_tip - scale*0.3 * Math.cos(0.25 * Math.PI - theta));
+	ctx.moveTo(x_tip * scale, y_tip * scale);
+	ctx.lineTo(scale*x_tip - scale*0.3 * Math.cos(0.25 * Math.PI - theta), scale*y_tip + scale*0.3 * Math.sin(0.25 * Math.PI - theta));
+	ctx.stroke();
+}
+
+function drawArrowSmall(x,y,x_tip,y_tip,color) {
+	var ctx = getCanvas();
+
+	// var gr = ctx.createLinearGradient(x,y,x_tip,y_tip);
+	// gr.addColorStop(0,color);
+	// gr.addColorStop(1,color);
+	//ctx.strokeStyle = gr
+
+	ctx.strokeStyle = color;
+
+	var theta = Math.atan((y_tip - y) / (x_tip - x));
+		if (x_tip - x < 0) {
+	    theta = theta + Math.PI;
+	} else { 
+	    theta = theta;
+	}
+	ctx.beginPath();
+	ctx.moveTo(x * scale, y * scale);
+	ctx.lineTo(x_tip * scale, y_tip * scale);
+	ctx.lineTo(scale*x_tip - scale*0.15 * Math.sin(Math.PI/3 - theta), scale*y_tip - scale*0.15 * Math.cos(Math.PI/3 - theta));
+	ctx.moveTo(x_tip * scale, y_tip * scale);
+	ctx.lineTo(scale*x_tip - scale*0.15 * Math.cos(Math.PI/6 - theta), scale*y_tip + scale*0.15 * Math.sin(Math.PI/6 - theta));
+	ctx.closePath();
+
+		ctx.lineWidth=2;
+	ctx.stroke();
+}
+
+function drawBall(x1,y1,r) {
+	var ctx = getCanvas();
+
+	ctx.beginPath();
+	ctx.arc(x1 * scale,y1 * scale,r * scale,0,2*Math.PI);
+	ctx.stroke();
+}
+}
+
+  </script>
+</body>
+</html>
