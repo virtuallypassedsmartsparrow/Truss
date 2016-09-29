@@ -434,8 +434,7 @@ function calculateVariables() {
 
     if (values.CE > 0) {values.CE_sign = 1;} else if (values.CE < 0) {values.CE_sign = 2;} else {values.CE_sign = 3;}
     if (values.DE > 0) {values.DE_sign = 1;} else if (values.DE < 0) {values.DE_sign = 2;} else {values.DE_sign = 3;}
-
-    values.DF_sign = 41;
+    if (values.DF > 0) {values.DF_sign = 1;} else if (values.DF < 0) {values.DF_sign = 2;} else {values.DF_sign = 3;}
 
 
     // Round values into valuesRounded
