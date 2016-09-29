@@ -322,10 +322,10 @@ function displayValues() {
 
 // Here i'm getting all the inputs from Smart Sparrow. This is the start of the draw function. Only put in inputs because other variables won't be there
 function getValuesFromSS() {
-    values.m = model.get('F1');
-    values.L = model.get('F2');
+    values.F1 = model.get('F1');
+    values.F2 = model.get('F2');
     page = model.get('page');
-    values.b = model.get('F3');
+    values.F3 = model.get('F3');
 }
 //ones the inputs are pulled from Smart Sparrow then they're calculated (all part of the draw function). Make sure I start from elementary formulas and work done.
 function calculateVariables() { 
