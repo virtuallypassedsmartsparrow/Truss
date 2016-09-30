@@ -141,15 +141,15 @@ var names = { //choose how to write variable string.
     DE: "DE",
     DF: "DF",
 
-    KI_sign: "KIs",
-    KL_sign: "KLs",
-    LI_sign: "LIs",
-    LJ_sign: "LJs",
-    JI_sign: "JIs",
-    JH_sign: "JHs",
-    CE_sign: "CEs",
-    DE_sign: "DEs",
-    DF_sign: "DFs",
+    KI_sign: "KI_sign",
+    KL_sign: "KL_sign",
+    LI_sign: "LI_sign",
+    LJ_sign: "LJ_sign",
+    JI_sign: "JI_sign",
+    JH_sign: "JH_sign",
+    CE_sign: "CE_sign",
+    DE_sign: "DE_sign",
+    DF_sign: "DF_sign",
 };
 
 var units = { //write the units
