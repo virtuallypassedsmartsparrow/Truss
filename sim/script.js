@@ -676,8 +676,9 @@ function round(input) {
     var i = input;
     var sigfig = 3
     i = i * Math.pow(10,sigfig);
-    //input = Math.round(i) / Math.pow(10,sigfig);
-    input = 5;
+    i = Math.round(i)
+    i = i / Math.pow(10,sigfig);
+    input = i;
     
     return input;
 }
