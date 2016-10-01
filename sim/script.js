@@ -340,15 +340,15 @@ function sendValuesToSS() {
     model.set("DE", values.DE);
     model.set("DF", values.DF);
 
-    model.set("KI_sign", values.KI);
-    model.set("KL_sign", values.KL);
-    model.set("LI_sign", values.LI);
-    model.set("LJ_sign", values.LJ);
-    model.set("JI_sign", values.JI);
-    model.set("JH_sign", values.JH);
-    model.set("CE_sign", values.CE);
-    model.set("DE_sign", values.DE);
-    model.set("DF_sign", values.DF);
+    model.set("KI_sign", values.KI_sign);
+    model.set("KL_sign", values.KL_sign);
+    model.set("LI_sign", values.LI_sign);
+    model.set("LJ_sign", values.LJ_sign);
+    model.set("JI_sign", values.JI_sign);
+    model.set("JH_sign", values.JH_sign);
+    model.set("CE_sign", values.CE_sign);
+    model.set("DE_sign", values.DE_sign);
+    model.set("DF_sign", values.DF_sign);
 }
 // what is the purpose of the num == 4 ? Is this to make it fit to the table somehow?
 function displayValues() {
