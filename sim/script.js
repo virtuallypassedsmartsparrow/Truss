@@ -672,6 +672,18 @@ function round(input) {
         input = Math.round(i) / Math.pow(10, position);
         return input;
     }
+
+    if (input < 0) {
+        var position = 0;
+        var i = input;
+        while (i > -1000) { // show 3 sig figs
+            i *= 10;
+            position++;
+        }
+        input = Math.round(i) / Math.pow(10, position);
+        return input;
+    }
+
     
     return input;
 }
