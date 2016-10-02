@@ -676,9 +676,9 @@ function round(input) {
     var i = Math.abs(input);
     var sigfig = 3
     var mag = Math.floor(Math.log10(i));
-    input = input * Math.pow(10, sigfig - mag);
+    input = input * Math.pow(10, sigfig - mag - 1);
     input = Math.round(input)
-    input = input / Math.pow(10, sigfig - mag);
+    input = input / Math.pow(10, sigfig - mag - 1);
 
         return input;
 }
