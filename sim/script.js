@@ -673,13 +673,12 @@ function round(input) {
     //     return input;
     // }
 
-    var i = input;
+    var i = Math.abs(input);
     var sigfig = 3
-    var mag = Math.floor(Math.log10(i)); 
-    i = i * Math.pow(10, sigfig - mag);
-    i = Math.round(i)
-    i = i / Math.pow(10, sigfig - mag);
-    input = i;
-    
-    return input;
+    var mag = Math.floor(Math.log10(i));
+    input = input * Math.pow(10, sigfig - mag);
+    input = Math.round(input)
+    input = input / Math.pow(10, sigfig - mag);
+
+        return input;
 }
