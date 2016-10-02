@@ -675,9 +675,10 @@ function round(input) {
 
     var i = input;
     var sigfig = 3
-    i = i * Math.pow(10,sigfig);
+    var mag = Math.floor(Math.log10(i)); 
+    i = i * Math.pow(10, sigfig - mag - 1);
     i = Math.round(i)
-    i = i / Math.pow(10,sigfig);
+    i = i / Math.pow(10, sigfig - mag - 1);
     input = i;
     
     return input;
